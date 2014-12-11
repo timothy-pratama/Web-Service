@@ -5,6 +5,8 @@
  */
 package Service;
 
+import DataType.Post;
+import DataType.User;
 import java.util.ArrayList;
 import java.util.Date;
 import javax.jws.WebService;
@@ -12,7 +14,9 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import com.firebase.client.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  *
@@ -20,6 +24,8 @@ import java.util.Map;
  */
 @WebService(serviceName = "DatabaseService")
 public class DatabaseService {
+    
+   
 
     /**
      * Web service operation
@@ -34,7 +40,7 @@ public class DatabaseService {
      * Web service operation
      */
     @WebMethod(operationName = "listPost")
-    public Object[] listPost() {
+    public Post[] listPost() {
         //TODO write your implementation code here:
         return null;
     }
@@ -80,9 +86,36 @@ public class DatabaseService {
      */
     @WebMethod(operationName = "listUser")
     public Object[] listUser() {
-        //TODO write your implementation code here:
-        return null;
+        {
+        Firebase ref = new Firebase("https://vivid-torch-7169.firebaseio.com/user");
+        Map<String,Object> daftaruser = new HashMap<>();
+        users = new ArrayList<>();
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot ds) {
+                daftaruser.putAll((Map<? extends String, ? extends User>) ds.getValue());
+                for(Entry<String,Object> entry : daftaruser.entrySet())
+                {
+                    Map<String,Object>userDetail = (Map<String,Object>) entry.getValue();
+                    String username = (String) userDetail.get("username");
+                    String email = (String) userDetail.get("email");
+                    String password = (String) userDetail.get("password");
+                    String role = (String) userDetail.get("role");
+                    User temp = new User(username, email, password, role);
+                    users.add(temp);
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError fe) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        });
+        }
+        return users.toArray();
     }
+
 
     /**
      * Web service operation
@@ -133,45 +166,13 @@ public class DatabaseService {
      * Web service operation
      */
     @WebMethod(operationName = "search")
-    public Object[] search(@WebParam(name = "query") String query) {
+    public Post[] search(@WebParam(name = "query") String query) {
         //TODO write your implementation code here:
         return null;
     }
-    
-    private final Firebase firebase;
 
     public DatabaseService() {
-        firebase = new Firebase("https://vivid-torch-7169.firebaseio.com/post");
-        firebase.addChildEventListener(new ChildEventListener() {
-
-            @Override
-            public void onChildAdded(DataSnapshot ds, String string) {
-                Map<String,Object> listPost = (Map<String,Object>) ds.getValue();
-                System.out.println("title: " + listPost.get("judul"));
-                Map<String,Object> test = new HashMap<>();
-                test.put("Update", "Children");
-                firebase.updateChildren(test);
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot ds, String string) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot ds) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot ds, String string) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void onCancelled(FirebaseError fe) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-        });
     }
+    
+    private List<User> users;
 }

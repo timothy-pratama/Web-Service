@@ -12,6 +12,7 @@ import java.util.Date;
  * @author timothy.pratama
  */
 public class Komentar {
+    private int id;
     private String email, komentar, nama;
     private int id_post;
     private Date tanggal;
@@ -56,13 +57,20 @@ public class Komentar {
         this.tanggal = tanggal;
     }
 
-    public Komentar(String email, String komentar, String nama, int id_post, Date tanggal) {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Komentar(int id, String email, String komentar, String nama, int id_post, Date tanggal) {
+        this.id = id;
         this.email = email;
         this.komentar = komentar;
         this.nama = nama;
         this.id_post = id_post;
         this.tanggal = tanggal;
     }
-    
-    
 }
