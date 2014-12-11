@@ -54,6 +54,14 @@ public class Post {
     public void setTanggal(Date tanggal) {
         this.tanggal = tanggal;
     }
+
+    public Post(String author, String judul, String konten, String status, Date tanggal) {
+        this.author = author;
+        this.judul = judul;
+        this.konten = konten;
+        this.status = status;
+        this.tanggal = tanggal;
+    }
     
     
 }

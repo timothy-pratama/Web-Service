@@ -55,6 +55,14 @@ public class Komentar {
     public void setTanggal(Date tanggal) {
         this.tanggal = tanggal;
     }
+
+    public Komentar(String email, String komentar, String nama, int id_post, Date tanggal) {
+        this.email = email;
+        this.komentar = komentar;
+        this.nama = nama;
+        this.id_post = id_post;
+        this.tanggal = tanggal;
+    }
     
     
 }
