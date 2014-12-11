@@ -10,6 +10,9 @@ import java.util.Date;
 import javax.jws.WebService;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
+import com.firebase.client.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -22,7 +25,7 @@ public class DatabaseService {
      * Web service operation
      */
     @WebMethod(operationName = "addPost")
-    public Boolean addPost(@WebParam(name = "judul") String judul, @WebParam(name = "konten") String konten, @WebParam(name = "tanggal") String tanggal) {
+    public Boolean addPost(@WebParam(name = "judul") String judul, @WebParam(name = "konten") String konten, @WebParam(name = "tanggal") Date tanggal) {
         //TODO write your implementation code here:
         return true;
     }
@@ -67,7 +70,7 @@ public class DatabaseService {
      * Web service operation
      */
     @WebMethod(operationName = "addUser")
-    public Boolean addUser(@WebParam(name = "nama") String nama, @WebParam(name = "email") String email, @WebParam(name = "role") String role) {
+    public Boolean addUser(@WebParam(name = "username") String username, @WebParam(name = "password") String pasword, @WebParam(name = "email") String email, @WebParam(name = "role") String role) {
         //TODO write your implementation code here:
         return null;
     }
@@ -85,7 +88,7 @@ public class DatabaseService {
      * Web service operation
      */
     @WebMethod(operationName = "editUser")
-    public Boolean editUser(@WebParam(name = "id") int id, @WebParam(name = "nama") String nama, @WebParam(name = "role") String role, @WebParam(name = "email") String email) {
+    public Boolean editUser(@WebParam(name = "nama") String nama, @WebParam(name = "role") String role, @WebParam(name = "email") String email) {
         //TODO write your implementation code here:
         return null;
     }
@@ -94,7 +97,7 @@ public class DatabaseService {
      * Web service operation
      */
     @WebMethod(operationName = "deleteUser")
-    public Boolean deleteUser(@WebParam(name = "id") int id) {
+    public Boolean deleteUser(@WebParam(name = "username") String username) {
         //TODO write your implementation code here:
         return null;
     }
@@ -133,5 +136,42 @@ public class DatabaseService {
     public Object[] search(@WebParam(name = "query") String query) {
         //TODO write your implementation code here:
         return null;
+    }
+    
+    private final Firebase firebase;
+
+    public DatabaseService() {
+        firebase = new Firebase("https://vivid-torch-7169.firebaseio.com/post");
+        firebase.addChildEventListener(new ChildEventListener() {
+
+            @Override
+            public void onChildAdded(DataSnapshot ds, String string) {
+                Map<String,Object> listPost = (Map<String,Object>) ds.getValue();
+                System.out.println("title: " + listPost.get("judul"));
+                Map<String,Object> test = new HashMap<>();
+                test.put("Update", "Children");
+                firebase.updateChildren(test);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot ds, String string) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot ds) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot ds, String string) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void onCancelled(FirebaseError fe) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        });
     }
 }
