@@ -5,6 +5,7 @@
  */
 package Service;
 
+import DataType.Komentar;
 import DataType.Post;
 import DataType.User;
 import java.util.ArrayList;
@@ -13,10 +14,12 @@ import javax.jws.WebService;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import com.firebase.client.*;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import javax.servlet.annotation.WebInitParam;
 
 /**
  *
@@ -24,15 +27,19 @@ import java.util.Map.Entry;
  */
 @WebService(serviceName = "DatabaseService")
 public class DatabaseService {
-    
-   
 
     /**
      * Web service operation
      */
     @WebMethod(operationName = "addPost")
-    public Boolean addPost(@WebParam(name = "judul") String judul, @WebParam(name = "konten") String konten, @WebParam(name = "tanggal") Date tanggal) {
-        //TODO write your implementation code here:
+    public Boolean addPost(@WebParam(name = "judul") String judul, @WebParam(name = "author")String author, @WebParam(name = "konten") String konten, @WebParam(name = "tanggal") String tanggal) {
+        Firebase ref = new Firebase(firebaseURL);
+        Map<String, String> p = new HashMap<>();
+        p.put("judul",judul);
+        p.put("author",author);
+        p.put("konten",konten);
+        p.put("tanggal",tanggal);
+        p.put("status","unpublished");
         return true;
     }
 
@@ -57,12 +64,7 @@ public class DatabaseService {
      * Web service operation
      */
     @WebMethod(operationName = "deletePost")
-    public Boolean deletePost(@WebParam(name = "id") int id) {
-        String url = "https://vivid-torch-7169.firebaseio.com/post";
-        url = url + "/" + id;
-        System.out.println("URL ID yang akan di delete = " + url);
-        Firebase ref = new Firebase(url);
-        ref.removeValue();
+    public Boolean deletePost(@WebParam(name = "id") String id) {
         return true;
     }
 
@@ -107,11 +109,6 @@ public class DatabaseService {
      */
     @WebMethod(operationName = "deleteUser")
     public Boolean deleteUser(@WebParam(name = "username") String username) {
-        String url = "https://vivid-torch-7169.firebaseio.com/user";
-        url = url + "/" + username;
-        System.out.println("[Delete User]URL: " + url);
-        Firebase ref = new Firebase(url);
-        ref.removeValue();
         return true;
     }
 
@@ -119,8 +116,19 @@ public class DatabaseService {
      * Web service operation
      */
     @WebMethod(operationName = "addComment")
-    public Boolean addComment(@WebParam(name = "id")String id, @WebParam(name = "nama") String nama, @WebParam(name = "email") String email, @WebParam(name = "kontent") String kontent) {
-        return null;
+    public Boolean addComment(@WebParam(name = "id_post")String id_post, @WebParam(name = "nama") String nama, @WebParam(name = "email") String email, @WebParam(name = "komentar") String komentar) {
+        Firebase ref = new Firebase(firebaseURL);
+        HashMap<String, String> newComment = new HashMap<>();
+        newComment.put("id_post", id_post);
+        newComment.put("Nama", nama);
+        newComment.put("Email", email);
+        newComment.put("Komentar", komentar);
+        Date date = new Date();
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+        String tanggal = format.format(date);
+        newComment.put("Tanggal", tanggal);
+        ref.child("Komentar").push().setValue(newComment);
+        return true;
     }
 
     /**
@@ -135,9 +143,8 @@ public class DatabaseService {
      * Web service operation
      */
     @WebMethod(operationName = "deleteComment")
-    public Boolean deleteComment(@WebParam(name = "id") int id) {
-        //TODO write your implementation code here:
-        return null;
+    public Boolean deleteComment(@WebParam(name = "id") String id) {
+        return true;
     }
 
     /**
@@ -145,13 +152,14 @@ public class DatabaseService {
      */
     @WebMethod(operationName = "search")
     public Post[] search(@WebParam(name = "query") String query) {
-        //TODO write your implementation code here:
         return null;
     }
 
     public DatabaseService() {
+        firebaseURL = "https://vivid-torch-7169.firebaseio.com";
     }
     
+    //Methods
     private List<User> users;
-    Boolean finish;
+    private String firebaseURL;
 }
