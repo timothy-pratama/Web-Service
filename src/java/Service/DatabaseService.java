@@ -40,6 +40,7 @@ public class DatabaseService {
         p.put("konten",konten);
         p.put("tanggal",tanggal);
         p.put("status","unpublished");
+        ref.child("post").push().setValue(p);
         return true;
     }
 
@@ -65,6 +66,8 @@ public class DatabaseService {
      */
     @WebMethod(operationName = "deletePost")
     public Boolean deletePost(@WebParam(name = "id") String id) {
+        Firebase ref = new Firebase(firebaseURL + "/post/" + id);
+        ref.removeValue();
         return true;
     }
 
@@ -81,9 +84,15 @@ public class DatabaseService {
      * Web service operation
      */
     @WebMethod(operationName = "addUser")
-    public Boolean addUser(@WebParam(name = "username") String username, @WebParam(name = "password") String pasword, @WebParam(name = "email") String email, @WebParam(name = "role") String role) {
-        //TODO write your implementation code here:
-        return null;
+    public Boolean addUser(@WebParam(name = "username") String username, @WebParam(name = "password") String password, @WebParam(name = "email") String email, @WebParam(name = "role") String role) {
+        Firebase ref = new Firebase(firebaseURL);
+        Map<String,String> u = new HashMap<>();
+        u.put("username", username);
+        u.put("password",password);
+        u.put("email", email);
+        u.put("role", role);
+        ref.child("user").push().setValue(u);
+        return true;
     }
 
     /**
@@ -127,7 +136,7 @@ public class DatabaseService {
         SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
         String tanggal = format.format(date);
         newComment.put("Tanggal", tanggal);
-        ref.child("Komentar").push().setValue(newComment);
+        ref.child("komentar").push().setValue(newComment);
         return true;
     }
 
@@ -144,6 +153,8 @@ public class DatabaseService {
      */
     @WebMethod(operationName = "deleteComment")
     public Boolean deleteComment(@WebParam(name = "id") String id) {
+        Firebase ref = new Firebase(firebaseURL + "/komentar/" + id);
+        ref.removeValue();
         return true;
     }
 
