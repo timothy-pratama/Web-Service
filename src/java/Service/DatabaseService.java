@@ -40,9 +40,8 @@ public class DatabaseService {
      * Web service operation
      */
     @WebMethod(operationName = "listPost")
-    public Post[] listPost() {
-        //TODO write your implementation code here:
-        return null;
+    public String listPost() {
+        return "https://vivid-torch-7169.firebaseio.com/post";
     }
 
     /**
@@ -59,8 +58,12 @@ public class DatabaseService {
      */
     @WebMethod(operationName = "deletePost")
     public Boolean deletePost(@WebParam(name = "id") int id) {
-        //TODO write your implementation code here:
-        return null;
+        String url = "https://vivid-torch-7169.firebaseio.com/post";
+        url = url + "/" + id;
+        System.out.println("URL ID yang akan di delete = " + url);
+        Firebase ref = new Firebase(url);
+        ref.removeValue();
+        return true;
     }
 
     /**
@@ -85,37 +88,10 @@ public class DatabaseService {
      * Web service operation
      */
     @WebMethod(operationName = "listUser")
-    public Object[] listUser() {
-        {
-        Firebase ref = new Firebase("https://vivid-torch-7169.firebaseio.com/user");
-        Map<String,Object> daftaruser = new HashMap<>();
-        users = new ArrayList<>();
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(DataSnapshot ds) {
-                daftaruser.putAll((Map<? extends String, ? extends User>) ds.getValue());
-                for(Entry<String,Object> entry : daftaruser.entrySet())
-                {
-                    Map<String,Object>userDetail = (Map<String,Object>) entry.getValue();
-                    String username = (String) userDetail.get("username");
-                    String email = (String) userDetail.get("email");
-                    String password = (String) userDetail.get("password");
-                    String role = (String) userDetail.get("role");
-                    User temp = new User(username, email, password, role);
-                    users.add(temp);
-                }
-            }
-
-            @Override
-            public void onCancelled(FirebaseError fe) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-        });
-        }
-        return users.toArray();
+    public String listUser() 
+    {
+        return "https://vivid-torch-7169.firebaseio.com/user";
     }
-
 
     /**
      * Web service operation
@@ -131,16 +107,19 @@ public class DatabaseService {
      */
     @WebMethod(operationName = "deleteUser")
     public Boolean deleteUser(@WebParam(name = "username") String username) {
-        //TODO write your implementation code here:
-        return null;
+        String url = "https://vivid-torch-7169.firebaseio.com/user";
+        url = url + "/" + username;
+        System.out.println("[Delete User]URL: " + url);
+        Firebase ref = new Firebase(url);
+        ref.removeValue();
+        return true;
     }
 
     /**
      * Web service operation
      */
     @WebMethod(operationName = "addComment")
-    public Boolean addComment(@WebParam(name = "nama") String nama, @WebParam(name = "email") String email, @WebParam(name = "kontent") String kontent) {
-        //TODO write your implementation code here:
+    public Boolean addComment(@WebParam(name = "id")String id, @WebParam(name = "nama") String nama, @WebParam(name = "email") String email, @WebParam(name = "kontent") String kontent) {
         return null;
     }
 
@@ -148,9 +127,8 @@ public class DatabaseService {
      * Web service operation
      */
     @WebMethod(operationName = "listComment")
-    public Object[] listComment() {
-        //TODO write your implementation code here:
-        return null;
+    public String listComment() {
+        return "https://vivid-torch-7169.firebaseio.com/komentar";
     }
 
     /**
@@ -175,4 +153,5 @@ public class DatabaseService {
     }
     
     private List<User> users;
+    Boolean finish;
 }
