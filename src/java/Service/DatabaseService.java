@@ -48,8 +48,8 @@ public class DatabaseService {
      * Web service operation
      */
     @WebMethod(operationName = "listPost")
-    public String listPost() {
-        return "https://vivid-torch-7169.firebaseio.com/post";
+    public List<Post> listPost() {
+        return null;
     }
 
     /**
@@ -142,7 +142,6 @@ public class DatabaseService {
     public Boolean addComment(@WebParam(name = "id_post")String id_post, @WebParam(name = "nama") String nama, @WebParam(name = "email") String email, @WebParam(name = "komentar") String komentar) {
         Firebase ref = new Firebase(firebaseURL);
         HashMap<String, String> newComment = new HashMap<>();
-        newComment.put("id_post", id_post);
         newComment.put("Nama", nama);
         newComment.put("Email", email);
         newComment.put("Komentar", komentar);
@@ -150,7 +149,7 @@ public class DatabaseService {
         SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
         String tanggal = format.format(date);
         newComment.put("Tanggal", tanggal);
-        ref.child("komentar").push().setValue(newComment);
+        ref.child("post").child(id_post).push().setValue(newComment);
         return true;
     }
 
@@ -160,16 +159,6 @@ public class DatabaseService {
     @WebMethod(operationName = "listComment")
     public String listComment() {
         return "https://vivid-torch-7169.firebaseio.com/komentar";
-    }
-
-    /**
-     * Web service operation
-     */
-    @WebMethod(operationName = "deleteComment")
-    public Boolean deleteComment(@WebParam(name = "id") String id) {
-        Firebase ref = new Firebase(firebaseURL + "/komentar/" + id);
-        ref.removeValue();
-        return true;
     }
 
     /**
