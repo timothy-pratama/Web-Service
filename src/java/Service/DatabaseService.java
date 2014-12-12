@@ -56,9 +56,15 @@ public class DatabaseService {
      * Web service operation
      */
     @WebMethod(operationName = "editPost")
-    public Boolean editPost(@WebParam(name = "id") int id, @WebParam(name = "judul") String judul, @WebParam(name = "konten") String konten, @WebParam(name = "tanggal") Date tanggal) {
-        //TODO write your implementation code here:
-        return null;
+    public Boolean editPost(@WebParam(name = "id") String id, @WebParam(name = "judul") String judul, @WebParam(name="author")String author, @WebParam(name = "konten") String konten, @WebParam(name = "tanggal") String tanggal) {
+        Firebase ref = new Firebase(firebaseURL);
+        Map<String,Object>p = new HashMap<>();
+        p.put("judul", judul);
+        p.put("author",author);
+        p.put("konten", konten);
+        p.put("tanggal",tanggal);
+        ref.child("post").child(id).updateChildren(p);
+        return true;
     }
 
     /**
@@ -108,9 +114,15 @@ public class DatabaseService {
      * Web service operation
      */
     @WebMethod(operationName = "editUser")
-    public Boolean editUser(@WebParam(name = "nama") String nama, @WebParam(name = "role") String role, @WebParam(name = "email") String email) {
-        //TODO write your implementation code here:
-        return null;
+    public Boolean editUser(@WebParam(name = "id")String id, @WebParam(name = "username") String username, @WebParam(name = "password")String password, @WebParam(name = "role") String role, @WebParam(name = "email") String email) {
+        Firebase ref = new Firebase(firebaseURL);
+        Map<String,Object>u = new HashMap<>();
+        u.put("username", username);
+        u.put("password", password);
+        u.put("email", email);
+        u.put("role", role);
+        ref.child("user").child(id).updateChildren(u);
+        return true;
     }
 
     /**
@@ -118,6 +130,8 @@ public class DatabaseService {
      */
     @WebMethod(operationName = "deleteUser")
     public Boolean deleteUser(@WebParam(name = "username") String username) {
+        Firebase ref = new Firebase(firebaseURL + "/user/" + username);
+        ref.removeValue();
         return true;
     }
 
@@ -171,6 +185,5 @@ public class DatabaseService {
     }
     
     //Methods
-    private List<User> users;
     private String firebaseURL;
 }
