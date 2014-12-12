@@ -5,9 +5,7 @@
  */
 package Service;
 
-import DataType.Komentar;
 import DataType.Post;
-import DataType.User;
 import java.util.ArrayList;
 import java.util.Date;
 import javax.jws.WebService;
@@ -18,8 +16,6 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import javax.servlet.annotation.WebInitParam;
 
 /**
  *
@@ -49,7 +45,25 @@ public class DatabaseService {
      */
     @WebMethod(operationName = "listPost")
     public List<Post> listPost() {
-        return null;
+        Firebase ref = new Firebase(firebaseURL);
+        Firebase post = ref.child("post");
+        post.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot ds) {
+                System.out.println("On Data Change");
+                finish=true;
+            }
+
+            @Override
+            public void onCancelled(FirebaseError fe) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        });
+        List<Post>l = new ArrayList<>();
+        l.add(new Post("author", "judul", "konten", "status","tanggal"));
+        System.out.println("Exit Program");
+        return l;
     }
 
     /**
@@ -72,8 +86,10 @@ public class DatabaseService {
      */
     @WebMethod(operationName = "deletePost")
     public Boolean deletePost(@WebParam(name = "id") String id) {
-        Firebase ref = new Firebase(firebaseURL + "/post/" + id);
-        ref.removeValue();
+        Firebase ref = new Firebase(firebaseURL);
+        Map<String,Object>p = new HashMap<>();
+        p.put("status","deleted");
+        ref.child("post").child(id).updateChildren(p);
         return true;
     }
 
@@ -81,9 +97,12 @@ public class DatabaseService {
      * Web service operation
      */
     @WebMethod(operationName = "publishPost")
-    public String publishPost(@WebParam(name = "id") int id) {
-        //TODO write your implementation code here:
-        return null;
+    public Boolean publishPost(@WebParam(name = "id") String id) {
+        Firebase ref = new Firebase(firebaseURL);
+        Map<String,Object>p = new HashMap<>();
+        p.put("status","published");
+        ref.child("post").child(id).updateChildren(p);
+        return true;
     }
 
     /**
@@ -171,8 +190,22 @@ public class DatabaseService {
 
     public DatabaseService() {
         firebaseURL = "https://vivid-torch-7169.firebaseio.com";
+        finish = false;
     }
     
     //Methods
-    private String firebaseURL;
+    private final String firebaseURL;
+    private Boolean finish;
+
+    /**
+     * Web service operation
+     */
+    @WebMethod(operationName = "restorePost")
+    public Boolean restorePost(@WebParam(name = "id") String id) {
+        Firebase ref = new Firebase(firebaseURL);
+        Map<String,Object>p = new HashMap<>();
+        p.put("status","published");
+        ref.child("post").child(id).updateChildren(p);
+        return true;
+    }
 }

@@ -12,8 +12,7 @@ import java.util.Date;
  * @author timothy.pratama
  */
 public class Post {
-    private String author, judul, konten, status;
-    private Date tanggal;
+    private String author, judul, konten, status, tanggal;
 
     public String getAuthor() {
         return author;
@@ -47,15 +46,15 @@ public class Post {
         this.status = status;
     }
 
-    public Date getTanggal() {
+    public String getTanggal() {
         return tanggal;
     }
 
-    public void setTanggal(Date tanggal) {
+    public void setTanggal(String tanggal) {
         this.tanggal = tanggal;
     }
 
-    public Post(String author, String judul, String konten, String status, Date tanggal) {
+    public Post(String author, String judul, String konten, String status, String tanggal) {
         this.author = author;
         this.judul = judul;
         this.konten = konten;
