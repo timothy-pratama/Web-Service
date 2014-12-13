@@ -14,6 +14,15 @@ import java.util.Date;
 public class Post {
     private String author, judul, konten, status, tanggal, id;
 
+    public Post() {
+        author ="";
+        judul ="";
+        konten = "";
+        status = "";
+        tanggal = "";
+        id = "";
+    }
+
     public String getAuthor() {
         return author;
     }

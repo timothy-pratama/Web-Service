@@ -12,6 +12,14 @@ package DataType;
 public class User {
     private String username, email, password, role, id;
 
+    public User() {
+        username="";
+        email="";
+        password="";
+        role="";
+        id="";
+    }
+
     public String getId() {
         return id;
     }

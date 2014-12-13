@@ -14,6 +14,13 @@ import java.util.Date;
 public class Komentar {
     private String email, komentar, nama, tanggal;
 
+    public Komentar() {
+        email="";
+        komentar = "";
+        nama = "";
+        tanggal = "";
+    }
+
     public String getEmail() {
         return email;
     }
