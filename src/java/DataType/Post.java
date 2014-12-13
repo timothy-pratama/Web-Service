@@ -12,10 +12,18 @@ import java.util.Date;
  * @author timothy.pratama
  */
 public class Post {
-    private String author, judul, konten, status, tanggal;
+    private String author, judul, konten, status, tanggal, id;
 
     public String getAuthor() {
         return author;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public void setAuthor(String author) {
@@ -54,12 +62,13 @@ public class Post {
         this.tanggal = tanggal;
     }
 
-    public Post(String author, String judul, String konten, String status, String tanggal) {
+    public Post(String author, String judul, String konten, String status, String tanggal, String id) {
         this.author = author;
         this.judul = judul;
         this.konten = konten;
         this.status = status;
         this.tanggal = tanggal;
+        this.id = id;
     }
     
     

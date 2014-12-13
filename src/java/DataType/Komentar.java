@@ -12,9 +12,7 @@ import java.util.Date;
  * @author timothy.pratama
  */
 public class Komentar {
-    private String email, komentar, nama;
-    private String id_post;
-    private Date tanggal;
+    private String email, komentar, nama, tanggal;
 
     public String getEmail() {
         return email;
@@ -40,27 +38,24 @@ public class Komentar {
         this.nama = nama;
     }
 
-    public String getId_post() {
-        return id_post;
-    }
-
-    public void setId_post(String id_post) {
-        this.id_post = id_post;
-    }
-
-    public Date getTanggal() {
+    public String getTanggal() {
         return tanggal;
     }
 
-    public void setTanggal(Date tanggal) {
+    public void setTanggal(String tanggal) {
         this.tanggal = tanggal;
     }
 
-    public Komentar(String email, String komentar, String nama, String id_post, Date tanggal) {
+    public Komentar(String email, String komentar, String nama, String tanggal) {
         this.email = email;
         this.komentar = komentar;
         this.nama = nama;
-        this.id_post = id_post;
         this.tanggal = tanggal;
     }
+
+    @Override
+    public String toString() {
+        return "Komentar{" + "email=" + email + ", komentar=" + komentar + ", nama=" + nama + ", tanggal=" + tanggal + '}';
+    }
+    
 }

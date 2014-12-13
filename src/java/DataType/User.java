@@ -10,7 +10,15 @@ package DataType;
  * @author timothy.pratama
  */
 public class User {
-    private String username, email, password, role;
+    private String username, email, password, role, id;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getUsername() {
         return username;
@@ -44,10 +52,13 @@ public class User {
         this.role = role;
     }
 
-    public User(String username, String email, String password, String role) {
+    public User(String username, String email, String password, String role, String id) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.id = id;
     }
+
+   
 }

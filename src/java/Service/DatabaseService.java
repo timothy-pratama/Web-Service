@@ -5,17 +5,29 @@
  */
 package Service;
 
+import DataType.Komentar;
 import DataType.Post;
+import DataType.User;
 import java.util.ArrayList;
 import java.util.Date;
 import javax.jws.WebService;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import com.firebase.client.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import org.json.simple.*;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  *
@@ -44,26 +56,32 @@ public class DatabaseService {
      * Web service operation
      */
     @WebMethod(operationName = "listPost")
-    public List<Post> listPost() {
-        Firebase ref = new Firebase(firebaseURL);
-        Firebase post = ref.child("post");
-        post.addListenerForSingleValueEvent(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(DataSnapshot ds) {
-                System.out.println("On Data Change");
-                finish=true;
+    public List<Post> listPost(@WebParam(name = "post_status")String post_status) {
+        //post dengan status post_status yang akan diambil dari firebase.
+        List<Post> list = new ArrayList<>();
+        JSONObject json = getJSON(firebaseURL + "/post.json");
+        Map<String,Object>map = (Map<String,Object>)json;
+        for(Map.Entry<String,Object> m : map.entrySet())
+        {
+            System.out.println("Key:" + m.getKey());
+            if(m.getKey().charAt(0)=='-')//berarti post
+            {
+                Map<String,String>post = (Map<String,String>) m.getValue();
+                String author,judul,konten,status,tanggal,id;
+                author = post.get("author");
+                judul = post.get("judul");
+                konten = post.get("konten");
+                status = post.get("status");
+                tanggal = post.get("tanggal");
+                id = m.getKey();
+                Post temp = new Post(author, judul, konten, status, tanggal, id);
+                if(status.toLowerCase().equals(post_status.toLowerCase()))
+                {
+                    list.add(temp);
+                }
             }
-
-            @Override
-            public void onCancelled(FirebaseError fe) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-        });
-        List<Post>l = new ArrayList<>();
-        l.add(new Post("author", "judul", "konten", "status","tanggal"));
-        System.out.println("Exit Program");
-        return l;
+        }
+        return list;
     }
 
     /**
@@ -124,9 +142,25 @@ public class DatabaseService {
      * Web service operation
      */
     @WebMethod(operationName = "listUser")
-    public String listUser() 
+    public List<User> listUser() 
     {
-        return "https://vivid-torch-7169.firebaseio.com/user";
+        List<User> list = new ArrayList<>();
+        JSONObject json = getJSON(firebaseURL + "/user.json");
+        System.out.println("json: " + json);
+        Map<String,Object>map = json;
+        for(Map.Entry<String,Object>m : map.entrySet())
+        {
+            Map<String,String>user = (Map<String,String>) m.getValue();
+            String username, password, role, email, id;
+            username = user.get("username");
+            password = user.get("password");
+            role = user.get("role");
+            email = user.get("email");
+            id = m.getKey();
+            User temp = new User(username, email, password, role, id);
+            list.add(temp);
+        }
+        return list;
     }
 
     /**
@@ -148,8 +182,8 @@ public class DatabaseService {
      * Web service operation
      */
     @WebMethod(operationName = "deleteUser")
-    public Boolean deleteUser(@WebParam(name = "username") String username) {
-        Firebase ref = new Firebase(firebaseURL + "/user/" + username);
+    public Boolean deleteUser(@WebParam(name = "id") String id) {
+        Firebase ref = new Firebase(firebaseURL + "/user/" + id);
         ref.removeValue();
         return true;
     }
@@ -176,16 +210,52 @@ public class DatabaseService {
      * Web service operation
      */
     @WebMethod(operationName = "listComment")
-    public String listComment() {
-        return "https://vivid-torch-7169.firebaseio.com/komentar";
+    public List<Komentar> listComment(@WebParam(name = "id_post")String id_post) {
+        List<Komentar> list = new ArrayList<>();
+        JSONObject json = getJSON(firebaseURL + "/post/" + id_post + ".json");
+        Map<String,Object>map = (Map<String,Object>)json;
+        for(Map.Entry<String,Object> m : map.entrySet())
+        {
+            System.out.println("Key:" + m.getKey());
+            if(m.getKey().charAt(0)=='-')//berarti comment
+            {
+                Map<String,String>comment = (Map<String,String>) m.getValue();
+                Komentar temp = new Komentar(comment.get("Email"),comment.get("Komentar") ,comment.get("Nama"), comment.get("Tanggal"));
+                list.add(temp);
+            }
+        }
+        return list;
     }
 
     /**
      * Web service operation
      */
     @WebMethod(operationName = "search")
-    public Post[] search(@WebParam(name = "query") String query) {
-        return null;
+    public List<Post> search(@WebParam(name = "query") String query) {
+        List<Post> list = new ArrayList<>();
+        JSONObject json = getJSON(firebaseURL + "/post.json");
+        Map<String,Object>map = (Map<String,Object>)json;
+        for(Map.Entry<String,Object> m : map.entrySet())
+        {
+            System.out.println("Key:" + m.getKey());
+            if(m.getKey().charAt(0)=='-')//berarti post
+            {
+                Map<String,String>post = (Map<String,String>) m.getValue();
+                String author,judul,konten,status,tanggal,id;
+                author = post.get("author");
+                judul = post.get("judul");
+                konten = post.get("konten");
+                status = post.get("status");
+                tanggal = post.get("tanggal");
+                id = m.getKey();
+                Post temp = new Post(author, judul, konten, status, tanggal, id);
+                if(judul.toLowerCase().contains(query.toLowerCase()) || konten.toLowerCase().contains(query.toLowerCase()))  
+                {
+                    list.add(temp);
+                }
+            }
+        }
+        return list;
     }
 
     public DatabaseService() {
@@ -207,5 +277,39 @@ public class DatabaseService {
         p.put("status","published");
         ref.child("post").child(id).updateChildren(p);
         return true;
+    }
+    
+    private JSONObject getJSON(String path)
+    {
+        URL url;
+        InputStream is = null;
+        BufferedReader br;
+        String JSON = "";
+        String line = "";
+        JSONArray array = new JSONArray();
+        
+        try {
+            url = new URL(path);
+            is = url.openStream();
+            br = new BufferedReader(new InputStreamReader(is));
+            while((line = br.readLine()) != null)
+            {
+                JSON += line;
+            }
+            JSONParser parser = new JSONParser();
+            Object obj = parser.parse(JSON);
+            array.add(obj);
+        } catch (MalformedURLException ex) {
+            System.out.println(ex.toString());
+            java.util.logging.Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            System.out.println(ex.toString());
+            java.util.logging.Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
+            System.out.println(ex.toString());
+            java.util.logging.Logger.getLogger(DatabaseService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        JSONObject obj = (JSONObject) array.get(0);
+        return obj;
     }
 }
